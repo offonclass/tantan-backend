@@ -13,8 +13,12 @@ module.exports = {
       script: './dist/index.js',
       
       // 클러스터 모드로 실행 (CPU 코어 수만큼 인스턴스 생성)
-      instances: 'max',
-      exec_mode: 'cluster',
+      // instances: 'max',
+      // exec_mode: 'cluster',
+
+      // 단일 인스턴스로 실행 (개발 초기 단계)
+      instances: 1,
+      exec_mode: 'fork',
       
       // 메모리 사용량이 750MB를 넘으면 자동 재시작
       max_memory_restart: '750M',
@@ -56,17 +60,5 @@ module.exports = {
         // 실제 환경변수는 .env.production 또는 시스템에서 설정
       }
     }
-  ],
-  
-  // 배포 설정 (선택사항)
-  deploy: {
-    production: {
-      user: 'ubuntu',
-      host: 'tantanclass.com',
-      ref: 'origin/main',
-      repo: 'git@github.com:your-org/tantan-backend.git',
-      path: '/var/www/tantan-backend',
-      'post-deploy': 'pnpm install --frozen-lockfile && pnpm build && pm2 reload ecosystem.config.cjs --env production'
-    }
-  }
+  ]
 }; 
