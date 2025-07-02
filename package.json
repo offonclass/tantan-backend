@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "TantanClass Backend API Server",
   "main": "dist/index.js",
-  "packageManager": "pnpm@latest",
+  "packageManager": "pnpm@9.15.0",
   "scripts": {
     "dev": "nodemon src/index.ts",
     "build": "tsc",
