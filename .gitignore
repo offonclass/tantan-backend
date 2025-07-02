@@ -1,0 +1,73 @@
+# =============================================================================
+# Node.js 백엔드 프로젝트용 .gitignore
+# =============================================================================
+
+# 의존성 폴더
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# 환경변수 파일들 (보안)
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+.env.*
+
+# 빌드 결과물
+dist/
+build/
+*.tsbuildinfo
+
+# 로그 파일들
+logs/
+*.log
+
+# Runtime 데이터
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# 커버리지 리포트
+coverage/
+*.lcov
+
+# PM2 런타임 파일
+.pm2/
+
+# 임시 파일들
+.tmp/
+.temp/
+*.tmp
+*.temp
+
+# IDE/에디터 설정
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+*~
+
+# OS 생성 파일들
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# 테스트 관련
+.nyc_output/
+
+# 배포 관련
+*.tar.gz
+*.zip
+
+# 개발 중 생성되는 임시 파일들
+*.orig
+package-lock.json  # pnpm 사용하므로 npm lock 파일은 제외 
