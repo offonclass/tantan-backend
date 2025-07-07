@@ -11,6 +11,7 @@ dotenv.config();
 
 import { sequelize } from '../config/database';
 import { User } from '../models/User';
+import bcrypt from 'bcryptjs';
 
 type UserRole = 'system_admin' | 'academy_admin' | 'instructor';
 
@@ -39,7 +40,7 @@ const runSeeds = async () => {
       {
         user_id: 'admin1',
         email: 'admin1@tantan.com',
-        password: 'admin123!',
+        password: await bcrypt.hash('admin123!', 10),
         name: '관리자1',
         role: 'system_admin',
         is_active: true
@@ -47,7 +48,7 @@ const runSeeds = async () => {
       {
         user_id: 'admin2',
         email: 'admin2@tantan.com',
-        password: 'admin123!',
+        password: await bcrypt.hash('admin123!', 10),
         name: '관리자2',
         role: 'system_admin',
         is_active: true
@@ -55,7 +56,7 @@ const runSeeds = async () => {
       {
         user_id: 'admin3',
         email: 'admin3@tantan.com',
-        password: 'admin123!',
+        password: await bcrypt.hash('admin123!', 10),
         name: '관리자3',
         role: 'system_admin',
         is_active: true
