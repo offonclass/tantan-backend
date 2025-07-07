@@ -75,7 +75,6 @@ User.init(
       type: DataTypes.STRING(50),
       allowNull: false,
       unique: true,
-      field: 'user_id', // 데이터베이스 컬럼명
       validate: {
         len: [3, 50],
         notEmpty: true
@@ -117,13 +116,11 @@ User.init(
     academyId: {
       type: DataTypes.INTEGER.UNSIGNED,
       allowNull: true,
-      field: 'academy_id', // 데이터베이스 컬럼명
       comment: '소속 학원 ID (추후 Academy 모델과 연결할 외래키)'
     },
     phoneNumber: {
       type: DataTypes.STRING(20),
       allowNull: true,
-      field: 'phone_number', // 데이터베이스 컬럼명
       validate: {
         len: [0, 20]
       },
@@ -133,34 +130,29 @@ User.init(
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: true,
-      field: 'is_active', // 데이터베이스 컬럼명
       comment: '계정 활성화 상태'
     },
     isExisted: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: true,
-      field: 'is_existed', // 데이터베이스 컬럼명
       comment: '계정 존재 여부 (소프트 삭제용)'
     },
     lastLoginAt: {
       type: DataTypes.DATE,
       allowNull: true,
-      field: 'last_login_at', // 데이터베이스 컬럼명
       comment: '마지막 로그인 시간'
     },
     createdAt: {
       type: DataTypes.DATE,
       allowNull: false,
       defaultValue: DataTypes.NOW,
-      field: 'created_at', // 데이터베이스 컬럼명
       comment: '계정 생성 시간'
     },
     updatedAt: {
       type: DataTypes.DATE,
       allowNull: false,
       defaultValue: DataTypes.NOW,
-      field: 'updated_at', // 데이터베이스 컬럼명
       comment: '계정 정보 수정 시간'
     }
   },
@@ -173,10 +165,10 @@ User.init(
     indexes: [
       {
         unique: true,
-        fields: ['user_id']  // 데이터베이스 컬럼명 사용
+        fields: ['userId']  // 카멜케이스로 변경
       },
       {
-        fields: ['academy_id']
+        fields: ['academyId']
       },
       {
         fields: ['role']

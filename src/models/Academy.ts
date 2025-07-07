@@ -66,7 +66,6 @@ Academy.init(
     campusName: {
       type: DataTypes.STRING(100),
       allowNull: false,
-      field: 'campus_name', // 데이터베이스 컬럼명
       validate: {
         len: [2, 100],
         notEmpty: true
@@ -94,28 +93,24 @@ Academy.init(
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: true,
-      field: 'is_active', // 데이터베이스 컬럼명
       comment: '학원 활성화 상태'
     },
     isExisted: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: true,
-      field: 'is_existed', // 데이터베이스 컬럼명
       comment: '학원 존재 여부 (삭제 시 false)'
     },
     createdAt: {
       type: DataTypes.DATE,
       allowNull: false,
       defaultValue: DataTypes.NOW,
-      field: 'created_at', // 데이터베이스 컬럼명
       comment: '학원 등록일'
     },
     updatedAt: {
       type: DataTypes.DATE,
       allowNull: false,
       defaultValue: DataTypes.NOW,
-      field: 'updated_at', // 데이터베이스 컬럼명
       comment: '학원 정보 수정일'
     }
   },
@@ -127,19 +122,19 @@ Academy.init(
     underscored: false, // camelCase 사용
     indexes: [
       {
-        fields: ['campus_name']  // 캠퍼스명 검색 최적화
+        fields: ['campusName']  // 캠퍼스명 검색 최적화
       },
       {
         fields: ['region']       // 지역별 검색 최적화
       },
       {
-        fields: ['is_active']    // 활성화 상태 필터링 최적화
+        fields: ['isActive']    // 활성화 상태 필터링 최적화
       },
       {
-        fields: ['is_existed']   // 존재 여부 필터링 최적화
+        fields: ['isExisted']   // 존재 여부 필터링 최적화
       },
       {
-        fields: ['created_at']   // 생성일 정렬 최적화
+        fields: ['createdAt']   // 생성일 정렬 최적화
       }
     ],
     hooks: {
