@@ -1,12 +1,13 @@
 // 환경변수 로드 (가장 먼저 실행되어야 함)
 import dotenv from 'dotenv';
+dotenv.config();  
 
 // 환경에 따라 다른 .env 파일 로드
-if (process.env.NODE_ENV === 'production') {
-  dotenv.config({ path: '.env' });           // 프로덕션: .env
-} else {
-  dotenv.config({ path: '.env.local' });     // 개발: .env.local
-}
+// if (process.env.NODE_ENV === 'production') {
+//   dotenv.config({ path: '.env' });           // 프로덕션: .env
+// } else {
+//   dotenv.config({ path: '.env.local' });     // 개발: .env.local
+// }
 
 import { sequelize } from '../config/database';
 import { User } from '../models/User';
