@@ -13,6 +13,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import { syncDatabase } from './config/database';
 import { setupErrorHandlers } from './middlewares/errorHandler';
+import routes from './routes';
 import './models'; // 모델들을 import하여 Sequelize에 등록
 
 // Express 애플리케이션 생성
@@ -44,10 +45,8 @@ app.use(express.urlencoded({ extended: true }));
 // API 라우트 설정
 // =============================================================================
 
-// TODO: 추후 인증, 사용자, PDF 관련 API 라우트 추가 예정
-// app.use('/api/auth', authRoutes);
-// app.use('/api/users', userRoutes);
-// app.use('/api/pdfs', pdfRoutes);
+// 메인 라우터 연결
+app.use('/', routes);
 
 // =============================================================================
 // 에러 핸들링

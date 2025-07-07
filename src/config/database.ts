@@ -22,7 +22,7 @@ export const sequelize = new Sequelize(DB_DATABASE, DB_USERNAME, DB_PASSWORD, {
   },
   
   // 로깅 설정 - 개발 환경에서만 SQL 쿼리 로그 출력
-  logging: process.env.NODE_ENV === 'development' ? console.log : false,
+  logging: false,
   
   // 타임존 설정 - 한국 시간
   timezone: '+09:00',
@@ -40,10 +40,8 @@ export const sequelize = new Sequelize(DB_DATABASE, DB_USERNAME, DB_PASSWORD, {
 // 데이터베이스 동기화 함수
 export const syncDatabase = async (): Promise<void> => {
   try {
-    await sequelize.sync({ 
-      force: false,  // true로 설정하면 기존 테이블 삭제 후 재생성 (주의!)
-      alter: false   // 스키마 변경이 필요할 때만 수동으로 true로 변경 후 실행
-    });
+    await sequelize.sync({  alter: false   });  // 🔧 Academy 테이블 생성을 위해 임시로 true로 변경
+   
     console.log('✅ Database connected and synchronized successfully');
     console.log(`📍 Connected to: ${DB_HOST}:${DB_PORT}/${DB_DATABASE}`);
   } catch (error) {
