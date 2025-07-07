@@ -27,9 +27,9 @@ export const authController = {
       // 사용자 조회 (존재하는 계정만, 학원 정보 포함)
       const user = await User.findOne({
         where: { 
-          user_id: username.trim(),
-          is_existed: true,
-          is_active: true
+          userId: username.trim(),
+          isExisted: true,
+          isActive: true
         },
         include: [
           {
@@ -37,7 +37,7 @@ export const authController = {
             as: 'academy', // alias 추가
             required: false, // LEFT JOIN (시스템 관리자는 학원이 없을 수 있음)
             where: {
-              is_existed: true
+              isExisted: true
             }
           }
         ]
@@ -62,9 +62,9 @@ export const authController = {
       // JWT 토큰 생성
       const token = generateToken({
         userId: user.id,
-        username: user.user_id,
+        username: user.userId,
         role: user.role,
-        ...(user.academy_id && { academyId: user.academy_id })
+        ...(user.academyId && { academyId: user.academyId })
       });
 
       // 마지막 로그인 시간 업데이트
@@ -75,13 +75,13 @@ export const authController = {
         token,
         user: {
           id: user.id,
-          username: user.user_id,
+          username: user.userId,
           name: user.name,
           email: user.email || '',
-          phoneNumber: user.phone_number || '',
+          phoneNumber: user.phoneNumber || '',
           role: user.role,
-          academyId: user.academy_id,
-          lastLoginAt: user.last_login_at
+          academyId: user.academyId,
+          lastLoginAt: user.lastLoginAt
         },
         academy: (user as any).academy || null
       });
@@ -125,8 +125,8 @@ export const authController = {
       const user = await User.findOne({
         where: { 
           id: decoded.userId,
-          is_existed: true,
-          is_active: true
+          isExisted: true,
+          isActive: true
         },
         include: [
           {
@@ -134,7 +134,7 @@ export const authController = {
             as: 'academy', // alias 추가
             required: false, // LEFT JOIN (시스템 관리자는 학원이 없을 수 있음)
             where: {
-              is_existed: true
+              isExisted: true
             }
           }
         ]
@@ -151,13 +151,13 @@ export const authController = {
         success: true,
         user: {
           id: user.id,
-          username: user.user_id,
+          username: user.userId,
           name: user.name,
           email: user.email || '',
-          phoneNumber: user.phone_number || '',
+          phoneNumber: user.phoneNumber || '',
           role: user.role,
-          academyId: user.academy_id,
-          lastLoginAt: user.last_login_at
+          academyId: user.academyId,
+          lastLoginAt: user.lastLoginAt
         },
         academy: (user as any).academy || null
       });

@@ -9,7 +9,7 @@ export const userController = {
   /**
    * 사용자 계정 목록 조회
    * - 특정 학원의 사용자만 조회
-   * - is_existed가 true인 사용자만 조회
+   * - isExisted가 true인 사용자만 조회
    * - 생성일 기준 내림차순 정렬
    */
   getUsers: (async (req: Request, res: Response) => {
@@ -25,23 +25,23 @@ export const userController = {
 
       const users = await User.findAll({
         where: { 
-          academy_id: academyId,
-          is_existed: true 
+          academyId: academyId,
+          isExisted: true 
         },
-        order: [['created_at', 'DESC']]
+        order: [['createdAt', 'DESC']]
       });
 
       return res.status(200).json({
         success: true,
         users: users.map(user => ({
           id: user.id,
-          academyId: user.academy_id,
-          username: user.user_id,
+          academyId: user.academyId,
+          username: user.userId,
           name: user.name,
           email: user.email || '',
-          phoneNumber: user.phone_number || '',
-          createdAt: user.created_at,
-          updatedAt: user.updated_at
+          phoneNumber: user.phoneNumber || '',
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt
         }))
       });
     } catch (error) {
@@ -74,8 +74,8 @@ export const userController = {
       // 아이디 중복 확인
       const existingUser = await User.findOne({
         where: { 
-          user_id: username.trim(),
-          is_existed: true
+          userId: username.trim(),
+          isExisted: true
         }
       });
 
@@ -88,26 +88,26 @@ export const userController = {
 
       // 사용자 생성
       const user = await User.create({
-        user_id: username.trim(),
+        userId: username.trim(),
         password: password, // bcrypt 자동 해시화
         name: name.trim(),
         role: 'academy_admin', // 고정값
-        academy_id: academyId,
+        academyId: academyId,
         ...(email && { email: email.trim() }),
-        ...(phoneNumber && { phone_number: phoneNumber.trim() })
+        ...(phoneNumber && { phoneNumber: phoneNumber.trim() })
       });
 
       return res.status(201).json({
         success: true,
         user: {
           id: user.id,
-          academyId: user.academy_id,
-          username: user.user_id,
+          academyId: user.academyId,
+          username: user.userId,
           name: user.name,
           email: user.email || '',
-          phoneNumber: user.phone_number || '',
-          createdAt: user.created_at,
-          updatedAt: user.updated_at
+          phoneNumber: user.phoneNumber || '',
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt
         }
       });
     } catch (error) {
@@ -121,7 +121,7 @@ export const userController = {
 
   /**
    * 사용자 계정 정보 수정
-   * - 존재하는(is_existed: true) 사용자만 수정 가능
+   * - 존재하는(isExisted: true) 사용자만 수정 가능
    * - 아이디, 이름은 필수
    * - 패스워드는 선택사항 (빈 값이면 변경하지 않음)
    * - 이메일, 폰번호는 선택사항
@@ -142,7 +142,7 @@ export const userController = {
       const user = await User.findOne({
         where: { 
           id,
-          is_existed: true
+          isExisted: true
         }
       });
 
@@ -154,11 +154,11 @@ export const userController = {
       }
 
       // 아이디 중복 확인 (자신 제외)
-      if (username.trim() !== user.user_id) {
+      if (username.trim() !== user.userId) {
         const existingUser = await User.findOne({
           where: { 
-            user_id: username.trim(),
-            is_existed: true,
+            userId: username.trim(),
+            isExisted: true,
             id: { [Op.ne]: id }
           }
         });
@@ -173,10 +173,10 @@ export const userController = {
 
       // 사용자 정보 수정
       const updateData: any = {
-        user_id: username.trim(),
+        userId: username.trim(),
         name: name.trim(),
         email: email?.trim() || null,
-        phone_number: phoneNumber?.trim() || null
+        phoneNumber: phoneNumber?.trim() || null
       };
 
       // 패스워드가 제공된 경우에만 업데이트
@@ -190,13 +190,13 @@ export const userController = {
         success: true,
         user: {
           id: user.id,
-          academyId: user.academy_id,
-          username: user.user_id,
+          academyId: user.academyId,
+          username: user.userId,
           name: user.name,
           email: user.email || '',
-          phoneNumber: user.phone_number || '',
-          createdAt: user.created_at,
-          updatedAt: user.updated_at
+          phoneNumber: user.phoneNumber || '',
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt
         }
       });
     } catch (error) {
@@ -210,7 +210,7 @@ export const userController = {
 
   /**
    * 사용자 계정 삭제 (소프트 삭제)
-   * - is_existed를 false로 변경
+   * - isExisted를 false로 변경
    */
   deleteUser: (async (req: Request, res: Response) => {
     try {
@@ -227,7 +227,7 @@ export const userController = {
       const user = await User.findOne({
         where: { 
           id,
-          is_existed: true
+          isExisted: true
         }
       });
 

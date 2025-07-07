@@ -5,38 +5,38 @@ import bcrypt from 'bcryptjs';
 // 사용자 모델의 속성 인터페이스 정의
 export interface UserAttributes {
   id: number;
-  user_id: string; // 로그인 ID (사용자명)
+  userId: string; // 로그인 ID (사용자명)
   email?: string; // 이메일 (선택사항)
-  phone_number?: string; // 폰번호 (선택사항)
+  phoneNumber?: string; // 폰번호 (선택사항)
   password: string;
   name: string;
   role: 'system_admin' | 'academy_admin' | 'instructor'; // 시스템 관리자, 학원 관리자, 강사
-  academy_id?: number; // 학원 ID (추후 Academy 모델과 연결할 외래키)
-  is_active: boolean;
-  is_existed: boolean; // 계정 존재 여부 (소프트 삭제용)
-  last_login_at?: Date;
-  created_at: Date;
-  updated_at: Date;
+  academyId?: number; // 학원 ID (추후 Academy 모델과 연결할 외래키)
+  isActive: boolean;
+  isExisted: boolean; // 계정 존재 여부 (소프트 삭제용)
+  lastLoginAt?: Date;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 // 사용자 생성 시 필요한 속성 (id, timestamps는 자동 생성)
-export interface UserCreationAttributes extends Optional<UserAttributes, 'id' | 'created_at' | 'updated_at' | 'last_login_at' | 'academy_id' | 'email' | 'phone_number' | 'is_existed'> {}
+export interface UserCreationAttributes extends Optional<UserAttributes, 'id' | 'createdAt' | 'updatedAt' | 'lastLoginAt' | 'academyId' | 'email' | 'phoneNumber' | 'isExisted'> {}
 
 // User 모델 클래스 정의
 export class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
   public id!: number;
-  public user_id!: string;
+  public userId!: string;
   public email?: string;
-  public phone_number?: string;
+  public phoneNumber?: string;
   public password!: string;
   public name!: string;
   public role!: 'system_admin' | 'academy_admin' | 'instructor';
-  public academy_id?: number;
-  public is_active!: boolean;
-  public is_existed!: boolean;
-  public last_login_at?: Date;
-  public readonly created_at!: Date;
-  public readonly updated_at!: Date;
+  public academyId?: number;
+  public isActive!: boolean;
+  public isExisted!: boolean;
+  public lastLoginAt?: Date;
+  public readonly createdAt!: Date;
+  public readonly updatedAt!: Date;
 
   // 비밀번호 검증 메서드
   public async validatePassword(password: string): Promise<boolean> {
@@ -51,13 +51,13 @@ export class User extends Model<UserAttributes, UserCreationAttributes> implemen
 
   // 마지막 로그인 시간 업데이트
   public async updateLastLogin(): Promise<void> {
-    this.last_login_at = new Date();
+    this.lastLoginAt = new Date();
     await this.save();
   }
 
   // 소프트 삭제 메서드
   public async softDelete(): Promise<void> {
-    this.is_existed = false;
+    this.isExisted = false;
     await this.save();
   }
 }
@@ -71,10 +71,11 @@ User.init(
       primaryKey: true,
       comment: '사용자 고유 ID'
     },
-    user_id: {
+    userId: {
       type: DataTypes.STRING(50),
       allowNull: false,
       unique: true,
+      field: 'user_id', // 데이터베이스 컬럼명
       validate: {
         len: [3, 50],
         notEmpty: true
@@ -113,46 +114,53 @@ User.init(
       defaultValue: 'instructor',
       comment: '사용자 역할 (system_admin: 시스템 관리자, academy_admin: 학원 관리자, instructor: 강사)'
     },
-    academy_id: {
+    academyId: {
       type: DataTypes.INTEGER.UNSIGNED,
       allowNull: true,
+      field: 'academy_id', // 데이터베이스 컬럼명
       comment: '소속 학원 ID (추후 Academy 모델과 연결할 외래키)'
     },
-    phone_number: {
+    phoneNumber: {
       type: DataTypes.STRING(20),
       allowNull: true,
+      field: 'phone_number', // 데이터베이스 컬럼명
       validate: {
         len: [0, 20]
       },
       comment: '사용자 폰번호 (선택사항)'
     },
-    is_active: {
+    isActive: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: true,
+      field: 'is_active', // 데이터베이스 컬럼명
       comment: '계정 활성화 상태'
     },
-    is_existed: {
+    isExisted: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: true,
+      field: 'is_existed', // 데이터베이스 컬럼명
       comment: '계정 존재 여부 (소프트 삭제용)'
     },
-    last_login_at: {
+    lastLoginAt: {
       type: DataTypes.DATE,
       allowNull: true,
+      field: 'last_login_at', // 데이터베이스 컬럼명
       comment: '마지막 로그인 시간'
     },
-    created_at: {
+    createdAt: {
       type: DataTypes.DATE,
       allowNull: false,
       defaultValue: DataTypes.NOW,
+      field: 'created_at', // 데이터베이스 컬럼명
       comment: '계정 생성 시간'
     },
-    updated_at: {
+    updatedAt: {
       type: DataTypes.DATE,
       allowNull: false,
       defaultValue: DataTypes.NOW,
+      field: 'updated_at', // 데이터베이스 컬럼명
       comment: '계정 정보 수정 시간'
     }
   },
@@ -160,10 +168,12 @@ User.init(
     sequelize,
     modelName: 'User',
     tableName: 'users',
+    timestamps: true,
+    underscored: false, // camelCase 사용
     indexes: [
       {
         unique: true,
-        fields: ['user_id']  // underscored: true 때문에 snake_case 사용
+        fields: ['user_id']  // 데이터베이스 컬럼명 사용
       },
       {
         fields: ['academy_id']

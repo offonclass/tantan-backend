@@ -7,28 +7,28 @@ import { Academy } from '../../models/Academy';
 export const academyController = {
   /**
    * 가맹학원 목록 조회
-   * - is_existed가 true인 학원만 조회
+   * - isExisted가 true인 학원만 조회
    * - 생성일 기준 내림차순 정렬
    */
   getAcademies: (async (req: Request, res: Response) => {
     try {
       const academies = await Academy.findAll({
         where: { 
-          is_existed: true 
+          isExisted: true 
         },
-        order: [['created_at', 'DESC']]
+        order: [['createdAt', 'DESC']]
       });
 
       return res.status(200).json({
         success: true,
         academies: academies.map(academy => ({
           id: academy.id,
-          campusName: academy.campus_name,
+          campusName: academy.campusName,
           region: academy.region,
-          contactNumber: academy.contact_number || '',
-          isActive: academy.is_active,
-          createdAt: academy.created_at,
-          updatedAt: academy.updated_at
+          contactNumber: academy.contactNumber || '',
+          isActive: academy.isActive,
+          createdAt: academy.createdAt,
+          updatedAt: academy.updatedAt
         }))
       });
     } catch (error) {
@@ -59,21 +59,21 @@ export const academyController = {
 
       // 학원 생성
       const academy = await Academy.create({
-        campus_name: campusName.trim(),
+        campusName: campusName.trim(),
         region: region.trim(),
-        ...(contactNumber && { contact_number: contactNumber.trim() })
+        ...(contactNumber && { contactNumber: contactNumber.trim() })
       });
 
       return res.status(201).json({
         success: true,
         academy: {
           id: academy.id,
-          campusName: academy.campus_name,
+          campusName: academy.campusName,
           region: academy.region,
-          contactNumber: academy.contact_number || '',
-          isActive: academy.is_active,
-          createdAt: academy.created_at,
-          updatedAt: academy.updated_at
+          contactNumber: academy.contactNumber || '',
+          isActive: academy.isActive,
+          createdAt: academy.createdAt,
+          updatedAt: academy.updatedAt
         }
       });
     } catch (error) {
@@ -87,7 +87,7 @@ export const academyController = {
 
   /**
    * 가맹학원 정보 수정
-   * - 존재하는(is_existed: true) 학원만 수정 가능
+   * - 존재하는(isExisted: true) 학원만 수정 가능
    * - 캠퍼스명과 지역명은 필수
    * - 연락처는 선택사항
    */
@@ -107,7 +107,7 @@ export const academyController = {
       const academy = await Academy.findOne({
         where: { 
           id,
-          is_existed: true
+          isExisted: true
         }
       });
 
@@ -120,21 +120,21 @@ export const academyController = {
 
       // 학원 정보 수정
       await academy.update({
-        campus_name: campusName.trim(),
+        campusName: campusName.trim(),
         region: region.trim(),
-        contact_number: contactNumber?.trim()
+        contactNumber: contactNumber?.trim()
       });
 
       return res.status(200).json({
         success: true,
         academy: {
           id: academy.id,
-          campusName: academy.campus_name,
+          campusName: academy.campusName,
           region: academy.region,
-          contactNumber: academy.contact_number || '',
-          isActive: academy.is_active,
-          createdAt: academy.created_at,
-          updatedAt: academy.updated_at
+          contactNumber: academy.contactNumber || '',
+          isActive: academy.isActive,
+          createdAt: academy.createdAt,
+          updatedAt: academy.updatedAt
         }
       });
     } catch (error) {
@@ -148,7 +148,7 @@ export const academyController = {
 
   /**
    * 가맹학원 삭제 (소프트 삭제)
-   * - is_existed를 false로 변경
+   * - isExisted를 false로 변경
    */
   deleteAcademy: (async (req: Request, res: Response) => {
     try {
@@ -165,7 +165,7 @@ export const academyController = {
       const academy = await Academy.findOne({
         where: { 
           id,
-          is_existed: true
+          isExisted: true
         }
       });
 
@@ -178,7 +178,7 @@ export const academyController = {
 
       // 소프트 삭제 실행
       await academy.update({
-        is_existed: false
+        isExisted: false
       });
 
       return res.status(200).json({

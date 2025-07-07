@@ -6,14 +6,14 @@ import Academy from './Academy';
 // 모델들 간의 관계 설정
 // User - Academy 관계 (N:1)
 User.belongsTo(Academy, { 
-  foreignKey: 'academy_id', 
+  foreignKey: 'academyId', 
   as: 'academy',
-  onDelete: 'SET NULL',  // 학원 삭제 시 사용자의 academy_id를 NULL로 설정
-  onUpdate: 'CASCADE'    // 학원 ID 변경 시 사용자의 academy_id도 함께 업데이트
+  onDelete: 'SET NULL',  // 학원 삭제 시 사용자의 academyId를 NULL로 설정
+  onUpdate: 'CASCADE'    // 학원 ID 변경 시 사용자의 academyId도 함께 업데이트
 });
 
 Academy.hasMany(User, { 
-  foreignKey: 'academy_id', 
+  foreignKey: 'academyId', 
   as: 'users',
   onDelete: 'SET NULL',
   onUpdate: 'CASCADE'

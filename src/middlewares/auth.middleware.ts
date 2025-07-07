@@ -48,8 +48,8 @@ export const authenticateToken = async (req: Request, res: Response, next: NextF
     const user = await User.findOne({
       where: { 
         id: decoded.userId,
-        is_existed: true,
-        is_active: true
+        isExisted: true,
+        isActive: true
       }
     });
 
@@ -64,9 +64,9 @@ export const authenticateToken = async (req: Request, res: Response, next: NextF
     // 사용자 정보를 req.user에 설정
     req.user = {
       id: user.id,
-      username: user.user_id,
+      username: user.userId,
       role: user.role,
-      ...(user.academy_id && { academyId: user.academy_id })
+      ...(user.academyId && { academyId: user.academyId })
     };
 
     next();

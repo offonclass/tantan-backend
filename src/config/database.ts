@@ -40,7 +40,7 @@ export const sequelize = new Sequelize(DB_DATABASE, DB_USERNAME, DB_PASSWORD, {
 // 데이터베이스 동기화 함수
 export const syncDatabase = async (): Promise<void> => {
   try {
-    await sequelize.sync({  alter: false   });  // 🔧 Academy 테이블 생성을 위해 임시로 true로 변경
+    await sequelize.sync({  alter: true   });  // 🔧 Academy 테이블 생성을 위해 임시로 true로 변경
    
     console.log('✅ Database connected and synchronized successfully');
     console.log(`📍 Connected to: ${DB_HOST}:${DB_PORT}/${DB_DATABASE}`);

@@ -16,12 +16,12 @@ import bcrypt from 'bcryptjs';
 type UserRole = 'system_admin' | 'academy_admin' | 'instructor';
 
 interface AdminUser {
-  user_id: string;
+  userId: string;
   email: string;
   password: string;
   name: string;
   role: UserRole;
-  is_active: boolean;
+  isActive: boolean;
 }
 
 /**
@@ -38,28 +38,28 @@ const runSeeds = async () => {
     // 시스템 관리자 데이터
     const adminUsers: AdminUser[] = [
       {
-        user_id: 'admin1',
+        userId: 'admin1',
         email: 'admin1@tantan.com',
         password: await bcrypt.hash('admin123!', 10),
         name: '관리자1',
         role: 'system_admin',
-        is_active: true
+        isActive: true
       },
       {
-        user_id: 'admin2',
+        userId: 'admin2',
         email: 'admin2@tantan.com',
         password: await bcrypt.hash('admin123!', 10),
         name: '관리자2',
         role: 'system_admin',
-        is_active: true
+        isActive: true
       },
       {
-        user_id: 'admin3',
+        userId: 'admin3',
         email: 'admin3@tantan.com',
         password: await bcrypt.hash('admin123!', 10),
         name: '관리자3',
         role: 'system_admin',
-        is_active: true
+        isActive: true
       }
     ];
 
