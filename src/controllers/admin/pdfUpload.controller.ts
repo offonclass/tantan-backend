@@ -141,12 +141,24 @@ export const pdfUploadController = {
         return material;
       });
 
+      // SSE로 클라이언트에게 변환 완료 알림
       SSEManager.sendMessage(uuid, {
         type: "conversion-complete",
         data: {
           materialId: result.id,
           totalPages: pages.length,
         },
+      });
+
+      // Lambda에 성공 응답 보내기
+      res.status(200).json({
+        success: true,
+        message: "변환 완료 처리 성공",
+        data: {
+          materialId: result.id,
+          totalPages: pages.length,
+          uuid: uuid
+        }
       });
 
     } catch (error) {
