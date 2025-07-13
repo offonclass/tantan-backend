@@ -12,6 +12,7 @@ dotenv.config();
 import { sequelize } from '../config/database';
 import { User } from '../models/User';
 import bcrypt from 'bcryptjs';
+import { seedLectureMaterials } from './lectureMaterial.seed';
 
 type UserRole = 'system_admin' | 'academy_admin' | 'instructor';
 
@@ -65,7 +66,10 @@ const runSeeds = async () => {
 
     // 시스템 관리자 생성
     await User.bulkCreate(adminUsers);
-    console.log('✅ 시스템 관리자 계정 생성 완료!');
+    console.log('✅ 시스템 관리자 계정 생성 완료!\n');
+
+    // 교재/폴더 시드 데이터 생성
+    await seedLectureMaterials();
 
     process.exit(0);
   } catch (error) {

@@ -28,9 +28,26 @@ const PORT = process.env.PORT || 8000;
 
 // CORS 설정 - 프론트엔드에서 API 호출을 허용
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000', // tantan-front 주소
+  origin: [
+    process.env.FRONTEND_URL || 'http://localhost:3000', // tantan-front 주소
+    process.env.LAMBDA_URL || '*' // lambda 주소
+  ],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true, // 쿠키, 인증 헤더 등을 포함한 요청 허용
+  // SSE를 위한 헤더 허용
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  exposedHeaders: ['Content-Type']
 }));
+
+// SSE 연결은 장시간 유지되어야 하므로 타임아웃 설정 조정
+app.use((req, res, next) => {
+  // SSE 엔드포인트인 경우
+  if (req.url.includes('/api/admin/pdf-conversion/')) {
+    req.socket.setTimeout(0);
+    res.socket?.setTimeout(0);
+  }
+  next();
+});
 
 // Helmet - 보안 헤더 설정 (XSS, 클릭재킹 등 방어)
 app.use(helmet());

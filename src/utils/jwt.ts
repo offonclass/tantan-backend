@@ -52,7 +52,7 @@ export const verifyToken = (token: string): JwtPayload | null => {
     return decoded;
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {
-      console.error('❌ JWT 토큰이 만료되었습니다:', error.message);
+      // console.error('❌ JWT 토큰이 만료되었습니다:', error.message);
     } else if (error instanceof jwt.JsonWebTokenError) {
       console.error('❌ 유효하지 않은 JWT 토큰입니다:', error.message);
     } else {
