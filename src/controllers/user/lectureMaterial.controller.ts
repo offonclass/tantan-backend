@@ -66,7 +66,7 @@ export const userLectureMaterialController = {
         include: [{
           model: Page,
           as: 'pages',  // alias 추가
-          attributes: ['pageNumber', 's3Key'],
+          attributes: ['pageNumber', 's3Key', 'uuid'],  // uuid 필드 추가
           order: [['pageNumber', 'ASC']]
         }]
       });
@@ -86,7 +86,8 @@ export const userLectureMaterialController = {
           name: material.folderName,
           pages: material.pages?.map(page => ({
             pageNumber: page.pageNumber,
-            s3Key: page.s3Key
+            s3Key: page.s3Key,
+            uuid: page.uuid  // uuid 필드 추가
           })) || []
         }
       });
