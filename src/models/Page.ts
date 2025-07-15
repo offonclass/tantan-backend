@@ -1,8 +1,7 @@
 import { DataTypes, Model, Optional } from 'sequelize';
 import { sequelize } from '../config/database';
-import { LectureMaterial } from './LectureMaterial';
 
-// 페이지 모델의 속성 인터페이스 정의
+// Page 모델의 속성 인터페이스 정의
 export interface PageAttributes {
   id: number;
   uuid: string;
@@ -14,8 +13,8 @@ export interface PageAttributes {
   updatedAt: Date;
 }
 
-// 페이지 생성 시 필요한 속성 (id, timestamps는 자동 생성)
-export interface PageCreationAttributes extends Optional<PageAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
+// 생성 시 선택적 속성 정의
+interface PageCreationAttributes extends Optional<PageAttributes, 'id' | 'uuid' | 'createdAt' | 'updatedAt'> {}
 
 // Page 모델 클래스 정의
 export class Page extends Model<PageAttributes, PageCreationAttributes> implements PageAttributes {
@@ -27,11 +26,6 @@ export class Page extends Model<PageAttributes, PageCreationAttributes> implemen
   public s3Key!: string;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
-
-  // CloudFront URL 생성 메서드 (실제 URL은 환경 변수에서 가져와야 함)
-  public getCloudFrontUrl(): string {
-    return `${process.env.CLOUDFRONT_DOMAIN}/${this.s3Key}`;
-  }
 }
 
 // Page 모델 정의 및 테이블 스키마 설정
@@ -103,6 +97,6 @@ Page.init(
       }
     ]
   }
-);
+); 
 
 export default Page; 

@@ -1,6 +1,7 @@
 import { DataTypes, Model, Optional } from 'sequelize';
 import { sequelize } from '../config/database';
 import crypto from 'crypto';
+import { Page } from './Page';
 
 // 교재 모델의 속성 인터페이스 정의
 export interface LectureMaterialAttributes {
@@ -18,11 +19,15 @@ export interface LectureMaterialAttributes {
   isFavorite: boolean;
   createdAt: Date;
   updatedAt: Date;
+  pages?: Page[]; // 페이지 관계 추가
 }
 
-// 교재 생성 시 필요한 속성 (id, timestamps는 자동 생성)
-export interface LectureMaterialCreationAttributes extends Optional<LectureMaterialAttributes, 
-  'id' | 'uuid' | 'createdAt' | 'updatedAt' | 'parentId' | 'originalFileName' | 'totalPages' | 'uploadedBy' | 'sortOrder'> {}
+// 생성 시 선택적 속성 정의
+export interface LectureMaterialCreationAttributes
+  extends Optional<LectureMaterialAttributes, 
+    'id' | 'uuid' | 'parentId' | 'sortOrder' | 'originalFileName' | 
+    'totalPages' | 'uploadedBy' | 'pages' | 'createdAt' | 'updatedAt'
+  > {}
 
 // LectureMaterial 모델 클래스 정의
 export class LectureMaterial extends Model<LectureMaterialAttributes, LectureMaterialCreationAttributes> 
@@ -42,6 +47,7 @@ export class LectureMaterial extends Model<LectureMaterialAttributes, LectureMat
   public isFavorite!: boolean;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
+  public pages?: Page[]; // 페이지 관계 추가
 
   // 하위 항목 조회 메서드
   public async getChildren(): Promise<LectureMaterial[]> {
