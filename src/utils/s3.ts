@@ -7,7 +7,7 @@ import {
   GetObjectCommand
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { s3Client, S3_BUCKET_NAME, S3_BUCKET_TEMP, createS3Key, createTempKey, getMimeType } from '../config/aws';
+import { s3Client, S3_BUCKET_NAME, S3_BUCKET_TEMP, createS3Key, createTempKey, createAudioS3Key, getMimeType } from '../config/aws';
 
 /**
  * S3 관련 유틸리티 함수들
@@ -128,6 +128,42 @@ export const generatePdfUploadUrl = async (
     return { presignedUrl, tempKey };
   } catch (error) {
     console.error('❌ Presigned URL 생성 실패:', error);
+    throw error;
+  }
+};
+
+/**
+ * 오디오 업로드용 Presigned URL 생성
+ */
+export const generateAudioUploadUrl = async (
+  pageUuid: string,
+  audioUuid: string,
+  fileName: string,
+  fileSize: number,
+  mimeType: string
+): Promise<{ presignedUrl: string; s3Key: string }> => {
+  try {
+    const s3Key = createAudioS3Key(pageUuid, audioUuid, fileName);
+    
+    const command = new PutObjectCommand({
+      Bucket: S3_BUCKET_NAME,
+      Key: s3Key,
+      ContentType: mimeType,
+      ContentLength: fileSize,
+      ServerSideEncryption: 'AES256',
+      Metadata: {
+        audioUuid,
+        pageUuid,
+        originalFileName: fileName
+      }
+    });
+
+    const presignedUrl = await getSignedUrl(s3Client, command, { expiresIn: 900 }); // 15분
+
+    console.log(`✅ 오디오 Presigned URL 생성 완료: ${s3Key}`);
+    return { presignedUrl, s3Key };
+  } catch (error) {
+    console.error('❌ 오디오 Presigned URL 생성 실패:', error);
     throw error;
   }
 };

@@ -5,6 +5,7 @@ import Academy from './Academy';
 import LectureMaterial from './LectureMaterial';
 import Page from './Page';
 import PdfUploadSession from './PdfUploadSession';
+import Audio from './Audio';
 
 // 모델들 간의 관계 설정
 // User - Academy 관계 (N:1)
@@ -49,6 +50,19 @@ Page.belongsTo(LectureMaterial, {
   as: 'material'
 });
 
+// Page - Audio 관계 (1:N)
+Page.hasMany(Audio, {
+  foreignKey: 'pageId',
+  as: 'audios',
+  onDelete: 'CASCADE',  // 페이지 삭제 시 오디오도 함께 삭제
+  onUpdate: 'CASCADE'
+});
+
+Audio.belongsTo(Page, {
+  foreignKey: 'pageId',
+  as: 'page'
+});
+
 // PdfUploadSession - LectureMaterial 관계 (N:1)
 PdfUploadSession.belongsTo(LectureMaterial, {
   foreignKey: 'parentId',
@@ -62,13 +76,14 @@ export const models = {
   Academy,
   LectureMaterial,
   Page,
-  PdfUploadSession
+  PdfUploadSession,
+  Audio
 };
 
 // Sequelize 인스턴스도 export
 export { sequelize };
 
 // 개별 모델들도 export (편의성을 위해)
-export { User, Academy, LectureMaterial, Page, PdfUploadSession };
+export { User, Academy, LectureMaterial, Page, PdfUploadSession, Audio };
 
 export default models; 

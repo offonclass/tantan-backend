@@ -32,7 +32,8 @@ export const S3_BUCKET_TEMP = process.env.S3_BUCKET_TEMP!;  // 임시 저장소 
 // S3 경로 상수
 export const S3_PATHS = {
   BOOK_PAGE: 'book-page/',  // 변환된 이미지 저장 경로
-  TEMP: 'temp/'             // 임시 PDF 저장 경로
+  TEMP: 'temp/',            // 임시 PDF 저장 경로
+  AUDIO: 'audio/'           // 오디오 파일 저장 경로
 } as const;
 
 // 유틸리티 함수: S3 키 생성 (폴더 경로)
@@ -51,6 +52,12 @@ export const createTempKey = (uploadId: string, fileName: string): string => {
   return `${S3_PATHS.TEMP}${uploadId}/${fileName}`;
 };
 
+// 유틸리티 함수: 오디오 S3 키 생성
+export const createAudioS3Key = (pageUuid: string, audioUuid: string, fileName: string): string => {
+  const extension = fileName.split('.').pop()?.toLowerCase();
+  return `${S3_PATHS.AUDIO}${pageUuid}/${audioUuid}.${extension}`;
+};
+
 // 유틸리티 함수: Content-Type 추측
 export const getMimeType = (fileName: string): string => {
   const ext = fileName.split('.').pop()?.toLowerCase();
@@ -64,6 +71,19 @@ export const getMimeType = (fileName: string): string => {
       return 'image/webp';
     case 'pdf':
       return 'application/pdf';
+    // 오디오 파일 MIME 타입 추가
+    case 'mp3':
+      return 'audio/mpeg';
+    case 'wav':
+      return 'audio/wav';
+    case 'ogg':
+      return 'audio/ogg';
+    case 'aac':
+      return 'audio/aac';
+    case 'm4a':
+      return 'audio/mp4';
+    case 'flac':
+      return 'audio/flac';
     default:
       return 'application/octet-stream';
   }
