@@ -4,6 +4,7 @@ import { userController } from '../controllers/admin/user.controller';
 import { lectureMaterialController } from '../controllers/admin/lectureMaterial.controller';
 import { pdfUploadController } from '../controllers/admin/pdfUpload.controller';
 import { audioUploadController } from '../controllers/admin/audioUpload.controller';
+import { htmlLayerController } from '../controllers/admin/htmlLayer.controller';
 
 const router: Router = Router();
 
@@ -34,5 +35,9 @@ router.get('/pdf-conversion/:uuid', pdfUploadController.subscribeToConversion); 
 router.post('/get-audio-upload-url', audioUploadController.getUploadUrl);      // Presigned URL 발급
 router.post('/get-page-audios', audioUploadController.getPageAudios);          // 페이지별 오디오 목록 조회
 router.post('/delete-audio', audioUploadController.deleteAudio);               // 오디오 삭제
+
+// HTML 레이어 관련 라우트
+router.post('/html-layer/upload', htmlLayerController.uploadHTMLLayer);        // HTML 레이어 업로드 (system_admin 전용)
+router.post('/html-layer/get', htmlLayerController.getHTMLLayer);              // HTML 레이어 조회 (모든 사용자)
 
 export default router; 

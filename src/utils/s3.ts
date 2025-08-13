@@ -7,7 +7,7 @@ import {
   GetObjectCommand
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { s3Client, S3_BUCKET_NAME, S3_BUCKET_TEMP, createS3Key, createTempKey, createAudioS3Key, getMimeType } from '../config/aws';
+import { s3Client, S3_BUCKET_NAME, S3_BUCKET_TEMP, createS3Key, createTempKey, createAudioS3Key, createHTMLLayerS3Key, getMimeType } from '../config/aws';
 
 /**
  * S3 관련 유틸리티 함수들
@@ -72,7 +72,7 @@ export const deleteFolder = async (uuid: string): Promise<void> => {
     });
 
     await s3Client.send(command);
-    console.log(`✅ S3 폴더 삭제 완료: ${uuid}/`);
+    // console.log(`✅ S3 폴더 삭제 완료: ${uuid}/`);
   } catch (error) {
     console.error('❌ S3 폴더 삭제 실패:', error);
     throw error;
@@ -90,7 +90,7 @@ export const deleteFile = async (uuid: string, fileName: string): Promise<void> 
     });
 
     await s3Client.send(command);
-    console.log(`✅ S3 파일 삭제 완료: ${uuid}/${fileName}`);
+    // console.log(`✅ S3 파일 삭제 완료: ${uuid}/${fileName}`);
   } catch (error) {
     console.error('❌ S3 파일 삭제 실패:', error);
     throw error;
@@ -160,10 +160,77 @@ export const generateAudioUploadUrl = async (
 
     const presignedUrl = await getSignedUrl(s3Client, command, { expiresIn: 900 }); // 15분
 
-    console.log(`✅ 오디오 Presigned URL 생성 완료: ${s3Key}`);
+    // console.log(`✅ 오디오 Presigned URL 생성 완료: ${s3Key}`);
     return { presignedUrl, s3Key };
   } catch (error) {
     console.error('❌ 오디오 Presigned URL 생성 실패:', error);
+    throw error;
+  }
+};
+
+/**
+ * HTML 레이어 파일 S3에 직접 업로드
+ */
+export const uploadHTMLLayerToS3 = async (
+  pageUuid: string,
+  htmlContent: string
+): Promise<{ s3Key: string }> => {
+  try {
+    const s3Key = createHTMLLayerS3Key(pageUuid);
+    
+    const command = new PutObjectCommand({
+      Bucket: S3_BUCKET_NAME,
+      Key: s3Key,
+      Body: htmlContent,
+      ContentType: 'text/html; charset=utf-8',
+      ServerSideEncryption: 'AES256',
+      Metadata: {
+        pageUuid,
+        contentType: 'html-layer'
+      }
+    });
+
+    await s3Client.send(command);
+    
+    // console.log(`✅ HTML 레이어 업로드 완료: ${s3Key}`);
+    return { s3Key };
+  } catch (error) {
+    console.error('❌ HTML 레이어 업로드 실패:', error);
+    throw error;
+  }
+};
+
+/**
+ * HTML 레이어 파일 S3에서 다운로드
+ */
+export const downloadHTMLLayerFromS3 = async (
+  pageUuid: string
+): Promise<{ htmlContent: string; hasFile: boolean }> => {
+  try {
+    const s3Key = createHTMLLayerS3Key(pageUuid);
+    
+    const command = new GetObjectCommand({
+      Bucket: S3_BUCKET_NAME,
+      Key: s3Key
+    });
+
+    const response = await s3Client.send(command);
+    
+    if (response.Body) {
+      const htmlContent = await response.Body.transformToString('utf-8');
+      // console.log(`✅ HTML 레이어 다운로드 완료: ${s3Key}`);
+      return { htmlContent, hasFile: true };
+    } else {
+      return { htmlContent: '', hasFile: false };
+    }
+  } catch (error: any) {
+    // S3에서 파일이 없는 경우 (NoSuchKey 에러)
+    if (error.name === 'NoSuchKey' || error.$metadata?.httpStatusCode === 404) {
+      // console.log(`📄 HTML 레이어 파일 없음: ${pageUuid}`);
+      return { htmlContent: '', hasFile: false };
+    }
+    
+    console.error('❌ HTML 레이어 다운로드 실패:', error);
     throw error;
   }
 };

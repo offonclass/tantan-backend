@@ -33,7 +33,8 @@ export const S3_BUCKET_TEMP = process.env.S3_BUCKET_TEMP!;  // 임시 저장소 
 export const S3_PATHS = {
   BOOK_PAGE: 'book-page/',  // 변환된 이미지 저장 경로
   TEMP: 'temp/',            // 임시 PDF 저장 경로
-  AUDIO: 'audio/'           // 오디오 파일 저장 경로
+  AUDIO: 'audio/',          // 오디오 파일 저장 경로
+  HTML_LAYER: 'html-layer/' // HTML 레이어 저장 경로
 } as const;
 
 // 유틸리티 함수: S3 키 생성 (폴더 경로)
@@ -56,6 +57,11 @@ export const createTempKey = (uploadId: string, fileName: string): string => {
 export const createAudioS3Key = (pageUuid: string, audioUuid: string, fileName: string): string => {
   const extension = fileName.split('.').pop()?.toLowerCase();
   return `${S3_PATHS.AUDIO}${pageUuid}/${audioUuid}.${extension}`;
+};
+
+// 유틸리티 함수: HTML 레이어 S3 키 생성
+export const createHTMLLayerS3Key = (pageUuid: string): string => {
+  return `${S3_PATHS.HTML_LAYER}${pageUuid}/layer.html`;
 };
 
 // 유틸리티 함수: Content-Type 추측
