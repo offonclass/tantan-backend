@@ -137,7 +137,7 @@ export const htmlLayerController = {
           }
         });
       } else {
-        console.log(`📄 HTML 레이어 파일 없음: 페이지 ${page.pageNumber}`);
+        // console.log(`📄 HTML 레이어 파일 없음: 페이지 ${page.pageNumber}`);
         
         return res.status(200).json({
           success: true,

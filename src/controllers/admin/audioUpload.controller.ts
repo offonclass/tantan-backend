@@ -153,7 +153,7 @@ export const audioUploadController = {
         order: [['createdAt', 'DESC']] // 최신 업로드 순
       });
 
-      console.log(`✅ 페이지 id:${pageId} 의 오디오 목록 조회: ${audios.length}개`);
+      // console.log(`✅ 페이지 id:${pageId} 의 오디오 목록 조회: ${audios.length}개`);
 
       return res.status(200).json({
         success: true,
