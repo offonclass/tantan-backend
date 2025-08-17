@@ -6,6 +6,7 @@ import LectureMaterial from './LectureMaterial';
 import Page from './Page';
 import PdfUploadSession from './PdfUploadSession';
 import Audio from './Audio';
+import UserFavoriteMaterial from './UserFavoriteMaterial';
 
 // 모델들 간의 관계 설정
 // User - Academy 관계 (N:1)
@@ -70,6 +71,25 @@ PdfUploadSession.belongsTo(LectureMaterial, {
   onDelete: 'SET NULL'  // 상위 폴더 삭제 시 세션의 parentId를 NULL로 설정
 });
 
+// User - LectureMaterial 즐겨찾기 관계 (N:N)
+User.belongsToMany(LectureMaterial, {
+  through: UserFavoriteMaterial,
+  as: 'favoriteMaterials',
+  foreignKey: 'userId',
+  otherKey: 'lectureMaterialId',
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE'
+});
+
+LectureMaterial.belongsToMany(User, {
+  through: UserFavoriteMaterial,
+  as: 'favoritedBy',
+  foreignKey: 'lectureMaterialId',
+  otherKey: 'userId',
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE'
+});
+
 // 모든 모델들을 객체로 export
 export const models = {
   User,
@@ -77,13 +97,14 @@ export const models = {
   LectureMaterial,
   Page,
   PdfUploadSession,
-  Audio
+  Audio,
+  UserFavoriteMaterial
 };
 
 // Sequelize 인스턴스도 export
 export { sequelize };
 
 // 개별 모델들도 export (편의성을 위해)
-export { User, Academy, LectureMaterial, Page, PdfUploadSession, Audio };
+export { User, Academy, LectureMaterial, Page, PdfUploadSession, Audio, UserFavoriteMaterial };
 
 export default models; 
