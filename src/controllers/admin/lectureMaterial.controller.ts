@@ -113,7 +113,7 @@ export const lectureMaterialController = {
    */
   updateMaterial: (async (req: Request, res: Response) => {
     try {
-      const { id, folderName, isActive, isFavorite } = req.body;
+      const { id, folderName, isActive, isFavorite, parentId } = req.body;
 
       if (!id) {
         return res.status(400).json({
@@ -122,7 +122,7 @@ export const lectureMaterialController = {
         });
       }
 
-      // 교재/폴더 조회
+      // 대상 항목 조회
       const material = await LectureMaterial.findByPk(id);
 
       if (!material) {
@@ -138,7 +138,52 @@ export const lectureMaterialController = {
       if (isActive !== undefined) updateData.isActive = isActive;
       if (isFavorite !== undefined) updateData.isFavorite = isFavorite;
 
-      // 교재/폴더 정보 수정
+      // 위치 이동 처리: parentId가 전달된 경우만 수행
+      if (parentId !== undefined) {
+       
+        // 동일 부모로 이동이면 위치 변경은 생략 (이름 변경만 반영)
+        const isSameParent = (
+          (material.parentId == null && (parentId == null || parentId === '')) ||
+          (material.parentId != null && parentId === material.parentId)
+        );
+
+        if (!isSameParent) {
+          // 루트로 이동하는 경우(level=0)도 허용
+          if (parentId == null || parentId === '') {
+            updateData.parentId = null;
+            updateData.level = 0;
+          } else {
+            // 새 부모 유효성 검증 (존재 여부, 타입이 category인지)
+            const newParent = await LectureMaterial.findByPk(parentId);
+            if (!newParent) {
+              return res.status(404).json({
+                success: false,
+                message: '이동 대상 폴더를 찾을 수 없습니다.'
+              });
+            }
+            if (newParent.type !== 'category') {
+              return res.status(400).json({
+                success: false,
+                message: '이동 대상은 폴더(category)만 가능합니다.'
+              });
+            }
+
+            // 새 level 계산: 부모 level + 1
+            updateData.parentId = newParent.id;
+            updateData.level = newParent.level + 1;
+          }
+
+          // 같은 부모 하위 정렬 마지막으로 이동 (sortOrder = max + 1)
+          const lastSibling = await LectureMaterial.findOne({
+            where: { parentId: (parentId == null || parentId === '') ? null : parentId },
+            order: [['sortOrder', 'DESC']]
+          });
+          const nextSort = (lastSibling && lastSibling.sortOrder != null) ? lastSibling.sortOrder + 1 : 0;
+          updateData.sortOrder = nextSort;
+        }
+      }
+
+      // DB 업데이트
       await material.update(updateData);
 
       return res.status(200).json({
